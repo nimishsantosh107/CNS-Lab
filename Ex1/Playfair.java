@@ -22,6 +22,7 @@ class Playfair {
 		inputtext = scan.nextLine();
 		System.out.print("INPUT KEY (lower case)   : ");
 		key = scan.nextLine();
+		key = unique(key);
 
 		//SPLIT INPUT
 		splittext = splitText(inputtext);
@@ -157,4 +158,15 @@ class Playfair {
 			System.out.println("");
 		}
 	}
+
+	public static String unique(String s) { 
+        String str = new String(); 
+        for (int i = 0; i < s.length(); i++) { 
+            char c = s.charAt(i); 
+            if (str.indexOf(c) < 0) { 
+                str += c; 
+            } 
+        } 
+        return str; 
+    } 
 }
