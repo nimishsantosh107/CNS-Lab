@@ -99,14 +99,19 @@ class Playfair {
 	}
 
 	//SPLIT INPUT TEXT
-	private static ArrayList<String> splitText(String plaintext){
-		ArrayList<String> splittext = new ArrayList<String>();
-		if(plaintext.length()%2 != 0) {plaintext+='z';}
-
-		for(int i=0; i<plaintext.length(); i++){
-			if(i%2 == 0){
+	private static ArrayList<String> splitText(String plaintext) {
+    	ArrayList<String> splittext = new ArrayList<String>();
+    	for(int i = 0; i < plaintext.length() - 1; i++) {
+      		if(plaintext.charAt(i) == plaintext.charAt(i + 1)) {
+        		plaintext = plaintext.substring(0, i + 1) + "x" + plaintext.substring(i + 1);
+      		}
+    	}
+    	if(plaintext.length() % 2 == 1) plaintext += 'z';
+   		System.out.println("PLAINTEXT PROCESSED		: " + plaintext);
+		for(int i = 0; i < plaintext.length(); i++) {
+			if(i % 2 == 0) {
 				String temp = "";
-				temp = temp + plaintext.charAt(i) + plaintext.charAt(i+1);
+				temp = temp + plaintext.charAt(i) + plaintext.charAt(i + 1);
 				splittext.add(temp);
 			}
 		}
