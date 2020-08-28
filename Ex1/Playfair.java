@@ -138,6 +138,10 @@ class Playfair {
 	// RETURN INDEX OF CHAR IN TABLE
 	private static Tuple getTableIndex(char[][] table, char c){
 		Tuple res = new Tuple();
+		if(c == 'j'){
+			res.set(4,4);
+			return res;
+		}
 		for (int i=0;i<5;i++){
 			for (int j=0; j<5; j++){
 				if(table[i][j] == c){
