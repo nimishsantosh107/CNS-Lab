@@ -1,3 +1,12 @@
+# Ex2: Hill cipher and Vigenere Cipher
+
+*Nimish S*
+*312217104098*
+
+
+### Hill Cipher 
+#### Program:
+```java
 import java.lang.Math.*;
 import java.util.Scanner;
 
@@ -239,3 +248,79 @@ public class HillCipher {
         return adjointMatrix;
     }
 }
+
+```
+#### Output:
+![Hill](/Users/nimish/Desktop/1.png)
+
+### Vigenere Cipher:
+#### Program:
+```java
+import java.util.*;
+
+class Vigenere {
+
+	public static void main(String args[]) {
+		String inputStr = null, key = null;
+		int inputLen = -1, choice = -1;
+		Scanner scan = new Scanner(System.in);
+
+		while(choice != 3) {
+			System.out.println("0-Input\n1-Encrypt:\n2-Decrypt\n3-Exit");
+			choice = scan.nextInt();
+			switch(choice) {
+				case 0: {
+					System.out.println("Input String (lower case): ");
+					inputStr = scan.next();
+					inputLen = inputStr.length();
+					System.out.println("Input Key (lower case): ");
+					key = scan.next();
+					key = generateKey(key, inputLen);
+					break;
+				}
+				case 1: {
+					String cipher = encrypt(inputStr, inputLen, key);
+					System.out.println(cipher);
+					break;
+				}
+				case 2: {
+					String plaintext = decrypt(inputStr, inputLen, key);
+					System.out.println(plaintext);
+					break;
+				}
+			}
+		}
+	}
+
+	public static String encrypt(String inputStr, int inputLen, String key){
+		String cipher = "";
+		for(int i=0; i<inputLen; i++){
+			int code = ((inputStr.charAt(i)-97) + (key.charAt(i)-97)) % 26;
+			code += 97;
+			cipher += (char)code;
+		}
+		return cipher;
+	}
+	public static String decrypt(String cipher, int inputLen, String key) { 
+	    String plaintext=""; 
+	  
+	    for (int i = 0 ; i < inputLen; i++) { 
+	        int x = ((cipher.charAt(i)-97) -  (key.charAt(i)-97) + 26) %26;  
+	        x += 97; 
+	        plaintext+=(char)(x); 
+	    } 
+	    return plaintext; 
+	} 
+	
+	public static String generateKey(String key, int inputLen){
+		String modifiedKey = "";
+		for (int i=0; i<inputLen; i++){
+			modifiedKey += key.charAt(i%key.length());
+		}
+		return modifiedKey;
+	}
+}
+```
+#### Output:
+![Vigenere](/Users/nimish/Desktop/2.png)
+

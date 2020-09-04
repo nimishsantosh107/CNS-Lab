@@ -3,27 +3,34 @@ import java.util.*;
 class Vigenere {
 
 	public static void main(String args[]) {
-		String inputStr, key;
-		int inputLen;
-
+		String inputStr = null, key = null;
+		int inputLen = -1, choice = -1;
 		Scanner scan = new Scanner(System.in);
 
-		System.out.print("INPUT STRING (lower case): ");
-		inputStr = scan.nextLine();
-		inputLen = inputStr.length();
-		System.out.print("INPUT KEY (lower case): ");
-		key = scan.nextLine();
-		key = generateKey(key, inputLen);
-
-		System.out.print("0-ENCRYPT/1-DECRYPT: ");
-		int choice = scan.nextInt();
-
-		if(choice == 0){
-			String cipher = encrypt(inputStr, inputLen, key);
-			System.out.println(cipher);
-		} else {
-			String plaintext = decrypt(inputStr, inputLen, key);
-			System.out.println(plaintext);
+		while(choice != 3) {
+			System.out.println("0-Input\n1-Encrypt:\n2-Decrypt\n3-Exit");
+			choice = scan.nextInt();
+			switch(choice) {
+				case 0: {
+					System.out.println("Input String (lower case): ");
+					inputStr = scan.next();
+					inputLen = inputStr.length();
+					System.out.println("Input Key (lower case): ");
+					key = scan.next();
+					key = generateKey(key, inputLen);
+					break;
+				}
+				case 1: {
+					String cipher = encrypt(inputStr, inputLen, key);
+					System.out.println(cipher);
+					break;
+				}
+				case 2: {
+					String plaintext = decrypt(inputStr, inputLen, key);
+					System.out.println(plaintext);
+					break;
+				}
+			}
 		}
 	}
 
