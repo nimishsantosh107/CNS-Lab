@@ -8,7 +8,7 @@ public class RowColumn
         RowColumn obj=new RowColumn();
         Scanner in = new Scanner(System.in);
         do{
-            System.out.println("\n1) Encrypt\n2) Decrypt");
+            System.out.println("\n1-Encrypt\n2-Decrypt\n");
             choice=in.nextInt();
             System.out.println("Enter the string:");
             String s=in.next();
@@ -23,12 +23,12 @@ public class RowColumn
                 case 1: obj.creatematrixE(s,key,row,column);
                         obj.createkey(key,column);
                         obj.encrypt(row,column);
-                        obj.resultE(row,column,obj.encrypt);
+                        obj.resultEncrypted(row,column,obj.encrypt);
                         break;
                 case 2: obj.creatematrixD(s,key,row,column);
                         obj.createkey(key,column);
                         obj.decrypt(row,column);
-                        obj.resultD(row,column,obj.decrypt);
+                        obj.resultDecrypted(row,column,obj.decrypt);
                         break;
             }
             System.out.println("\ncontinue? y/n");
@@ -133,9 +133,9 @@ public class RowColumn
             }
         }
     }
-    public void resultE(int row,int column,char arr[][])
+    public void resultEncrypted(int row,int column,char arr[][])
     {
-        System.out.println("Encrypted text:");
+        System.out.println("ENCRYPTED:");
         for(int i=0;i<column;i++)
         {
             for(int j=0;j<row;j++)
@@ -144,9 +144,9 @@ public class RowColumn
             }
         }
     }
-    public void resultD(int row,int column,char arr[][])
+    public void resultDecrypted(int row,int column,char arr[][])
     {
-        System.out.println("Decrypted text:");
+        System.out.println("DECRYPTED:");
         for(int i=0;i<row;i++)
         {
             for(int j=0;j<column;j++)
