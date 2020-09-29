@@ -1,8 +1,15 @@
-//https://github.com/RohitMidha23/Cipher/
+# DES
+
+**Nimish S**
+**312217104098**
+
+### DES Program:
+
+```java
 import java.util.*;
 import java.math.*;
 
-public class DES {
+public class des {
     static int[] pc1 = { 57, 49, 41, 33, 25, 17, 9, 1, 58, 50, 42, 34, 26, 18, 10, 2, 59, 51, 43, 35, 27, 19, 11, 3, 60,
             52, 44, 36, 63, 55, 47, 39, 31, 23, 15, 7, 62, 54, 46, 38, 30, 22, 14, 6, 61, 53, 45, 37, 29, 21, 13, 5, 28,
             20, 12, 4 };
@@ -292,8 +299,8 @@ public class DES {
         keygen(key); // GENERATES 16 SUBKEYS
 
         // PRINT SUBKEYS
-        for (int i = 0; i < 16; i++)
-            System.out.print("\nSUBKEY " + String.valueOf(i + 1) + ": " + subkeys[i]);
+        // for (int i = 0; i < 16; i++)
+            // System.out.print("\nSUBKEY " + String.valueOf(i + 1) + ": " + subkeys[i]);
 
         System.out.print("\n\nEnter text to encrypt: ");
         text = s.nextLine();
@@ -305,3 +312,7 @@ public class DES {
         System.out.println("\nDECRYPTED STRING: " + decrypted);
     }
 }
+```
+
+#### Output:
+![output](/Users/nimish/Desktop/1.png)
