@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Base64;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
+
 public class AES {
     private static SecretKeySpec secretKey;
     private static byte[] key;
@@ -29,7 +30,7 @@ public class AES {
             cipher.init(Cipher.ENCRYPT_MODE, secretKey);
             return Base64.getEncoder().encodeToString(cipher.doFinal(strToEncrypt.getBytes("UTF-8")));
         } catch (Exception e) {
-            System.out.println("Error while encrypting: " + e.toString());
+            System.out.println("ERR: " + e.toString());
         }
         return null;
     }
@@ -41,14 +42,14 @@ public class AES {
             cipher.init(Cipher.DECRYPT_MODE, secretKey);
             return new String(cipher.doFinal(Base64.getDecoder().decode(strToDecrypt)));
         } catch (Exception e) {
-            System.out.println("Error: " + e.toString());
+            System.out.println("ERR: " + e.toString());
         }
         return null;
     }
     public static void main(String[] args) {
-        final String secretKey = "privatekey";
+        final String secretKey = "de023hd";
         String originalString;
-        System.out.println("Enter plain text:");
+        System.out.println("ENTER INPUT:");
         originalString = System.console().readLine();
         int ch;
         String encryptedString = AES.encrypt(originalString, secretKey);
