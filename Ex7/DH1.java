@@ -16,7 +16,6 @@ class PrimitiveRootGenerator {
         this.pr = primitiveRoots.get(new Random().nextInt(primitiveRoots.size()));
     }
     public long getPr() {
-        
         return pr;
     }
     private Vector < Long > getPrimitiveRoot(long p, long phi) {
@@ -91,7 +90,7 @@ class DHKey {
         }
 }
 
-public class DH {
+public class DH1 {
     
     public static void menu() {
         System.out.println("1. Generate prime and primitive root");
