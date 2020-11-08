@@ -102,7 +102,7 @@ class RSA {
 	private static String bytesToString(byte[] encrypted) {
         String res = "";
         for (byte b : encrypted) {
-            res += Byte.toString(b);
+            res += Byte.toString(b)+" ";
         }
         return res;
     }
