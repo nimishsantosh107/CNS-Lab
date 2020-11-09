@@ -7,10 +7,15 @@
 3.  Railfence (zigzag)
     RowColumn
 
-4.  *DES*
+4.  DES
     -   64 bit symmetric block cipher
     -   64 bit key
     -   16 rounds (48 bit 16subkeys from 64 bit 1key)
+    -   KEY -> permute -> /2 -> left shift -> 48bit permute (CREATE SUBKEY)
+    -   RIGHT (32) -> NEWLEFT
+    -   RIGHT (32)-> expand permute (48) -> XOR w SK -> Lookup table -> 32bits (TABLEOUT)
+    -   LEFT (32) + XOR (TABLEOUT) -> NEWRIGHT
+    -   reverse NEWRIGHT,NEWLEFT + permute
 
 5.  AES
     -   128 (16 bytes) bit Symmetric block cipher with a key (128, 192, 256 bits)
@@ -41,4 +46,6 @@
     -   split input to 448 mod(512) and then pad 64 = 512
     -   A,B,C,D,E - 32*5 = 160 input at each stage
 
-9.  *DSS*
+9.  DSS
+    -   Public, private, message hash, key -> sign
+    -   messagehash, sign, public -> verify
