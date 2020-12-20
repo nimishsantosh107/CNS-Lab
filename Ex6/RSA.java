@@ -18,18 +18,16 @@ class PublicKey {
 }
 
 class PrivateKey {
-	BigInteger p, q, d;
+	BigInteger n, d;
 	
-	public PrivateKey(BigInteger p, BigInteger q, BigInteger d) {
-		this.p = p;
-		this.q = q;
+	public PrivateKey(BigInteger n, BigInteger d) {
+		this.n = n;
 		this.d = d;
 	}
 
 	public void print(){
 		System.out.println("PRIVATE_KEY");
-		System.out.println("[p]\n"+this.p.toString());
-		System.out.println("[q]\n"+this.q.toString());
+		System.out.println("[n]\n"+this.n.toString());
 		System.out.println("[d]\n"+this.d.toString()+"\n");
 	}
 }
@@ -58,7 +56,7 @@ class RSA {
 
       	// Create Private / Public Keys
 	 	publicKey = new PublicKey(n, e);
-		privateKey = new PrivateKey(p, q, d);
+		privateKey = new PrivateKey(n, d);
 
 		// privateKey.print();
 		// publicKey.print();
@@ -79,7 +77,7 @@ class RSA {
 			}
 
 			else if (choice == 2) {
-				byte[] decrypted = decrypt(encrypted, publicKey, privateKey);
+				byte[] decrypted = decrypt(encrypted, privateKey);
 				String decryptedBytes = bytesToString(decrypted);
 				System.out.println("BYTES: \t\t"+decryptedBytes);
 				System.out.println("DECRYPTED:   \t"+ new String(decrypted));
@@ -95,8 +93,8 @@ class RSA {
 	}
 
     // Decrypt
-    public static byte[] decrypt(byte[] message, PublicKey publicKey, PrivateKey privateKey) {
-		return (new BigInteger(message)).modPow(privateKey.d, publicKey.n).toByteArray();
+    public static byte[] decrypt(byte[] cipher, PrivateKey privateKey) {
+		return (new BigInteger(cipher)).modPow(privateKey.d, privateKey.n).toByteArray();
 	}
     
 	private static String bytesToString(byte[] encrypted) {

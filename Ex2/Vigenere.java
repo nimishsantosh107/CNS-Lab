@@ -35,6 +35,7 @@ class Vigenere {
 	}
 
 	public static String encrypt(String inputStr, int inputLen, String key){
+		// Ei = (Pi + Ki) mod 26
 		String cipher = "";
 		for(int i=0; i<inputLen; i++){
 			int code = ((inputStr.charAt(i)-97) + (key.charAt(i)-97)) % 26;
@@ -44,8 +45,8 @@ class Vigenere {
 		return cipher;
 	}
 	public static String decrypt(String cipher, int inputLen, String key) { 
+		// Di = (Ei - Ki + 26) mod 26
 	    String plaintext=""; 
-	  
 	    for (int i = 0 ; i < inputLen; i++) { 
 	        int x = ((cipher.charAt(i)-97) -  (key.charAt(i)-97) + 26) %26;  
 	        x += 97; 

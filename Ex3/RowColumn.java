@@ -1,6 +1,9 @@
 import java.util.*;
 public class RowColumn
 {
+    // 2 3 1
+    // A B C
+    // 1 2 3 - c3a1b2
 	public static void main(String args[])
     {
         int row,column,choice;

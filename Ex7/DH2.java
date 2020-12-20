@@ -80,26 +80,26 @@ public class DiffieHellman {
     }
 
     public static void main(String args[]) {
-        BigInteger q, g, xa, xb, ya, yb, k1, k2;
+        BigInteger n, g, xa, xb, ya, yb, k1, k2;
         DiffieHellman dh = new DiffieHellman();
         Scanner sc = new Scanner(System.in);
         int length = 8;
         Random random = new Random();
-        q = BigInteger.probablePrime(length, random);
+        n = BigInteger.probablePrime(length, random);
         System.out.println("Selected probable prime number = " + q);
-        long l = q.longValue();
+        long l = n.longValue();
         if (dh.primeMillerRabin(l, 3)) {
-            System.out.println(q + " is possibly prime by Miller Rabin Test");
-            g = BigInteger.valueOf(dh.getPrimitiveRoots(q.longValue()));
-            System.out.println("Primitive root of q = " + q + " is " + g);
+            System.out.println(n + " is possibly prime by Miller Rabin Test");
+            g = BigInteger.valueOf(dh.getPrimitiveRoots(n.longValue()));
+            System.out.println("Primitive root of n = " + n + " is " + g);
             System.out.println("Choose 1st secret (Alice):");
-            xa = sc.nextBigInteger();
+            a = sc.nextBigInteger();
             System.out.println("Choose 2nd secret (Bob):");
-            xb = sc.nextBigInteger();
-            ya = g.modPow(xa, q);
-            yb = g.modPow(xb, q);
-            k1 = yb.modPow(xa, q);
-            k2 = ya.modPow(xb, q);
+            b = sc.nextBigInteger();
+            ga = g.modPow(a, n);
+            gb = g.modPow(b, n);
+            k1 = gb.modPow(a, n);
+            k2 = ga.modPow(b, n);
             if (k1.compareTo(k2) == 0) {
                 System.out.println("Alice and Bob can communicate");
                 System.out.println("Secret key = " + k1);
@@ -107,7 +107,7 @@ public class DiffieHellman {
                 System.out.println("Alice and Bob cannot communicate");
             }
         } else {
-            System.out.println(q + " is not prime");
+            System.out.println(n + " is not prime");
         }
         sc.close();
     }

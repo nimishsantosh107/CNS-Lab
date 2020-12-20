@@ -1,241 +1,220 @@
-import java.lang.Math.*;
-import java.util.Scanner;
+import java.util.*;
 
 public class HillCipher {
-    public static void main(String[] args) {
-        
-        Scanner input = new Scanner(System.in);
-        int choice = 0;
-        int n = 0;
-        String plainText = "";
-        int[][] plainTextMatrix = null; 
-        int[][] key = null;
-        int[][] cipherMatrix = null;
-        
-        while(choice != 5) {
-            printMenu();
-            choice = input.nextInt();            
-            switch(choice) {
-                case 1:{
-                     System.out.println("Enter the size of key matrix : \n");
-                     n = input.nextInt();
-                     System.out.println("Enter key matrix : \n");
-                     key = new int[n][n];
-                     for ( int i = 0 ; i < n ; i++ ) {
-                         for ( int j = 0; j < n ; j++ ) {
-                             key[i][j] = input.nextInt();
-                         }
-                     }
-                     if ( getDeterminant(key, n, n) == 0) {
-                         System.out.println("Invese does not exist.\n");
-                     }
-                     break;
-                }
-                case 2:{
-                    System.out.println(" Enter the plain text :  \n");
-                    plainText = input.next();
-                    plainText = checkPlainText(plainText, n);
-                    plainTextMatrix = matCharToASCII( plainTextToMatrix(plainText, n) , n , plainText.length() / n );
-                    break;
-                }
-                case 3:{
-                    if ( plainText.equals("") ) {
-                        System.out.println("Enter required parameters for encrypting\n");
-                    }else {
-                        System.out.println("Encrypting plain text... \n");
-                        cipherMatrix = matrixMultiply( key, plainTextMatrix, n, plainText.length() / n );
-                        char[][] temp = new char[n][plainText.length()/n];
-                        for ( int j = 0 ; j < plainText.length() / n ; j++ ) {
-                            for ( int i = 0; i < n ; i++ ) {
-                                int tempNum =  cipherMatrix[i][j] % 26;
-                                cipherMatrix[i][j] = tempNum < 0 ? 26 + tempNum : tempNum;
-                            }
-                        }
-                        temp =  matASCIIToChar( cipherMatrix, n , plainText.length() / n );
-                        System.out.println(matrixToString( temp , n , plainText.length() / n ));
+    private int[][] encryptionKey = new int[100][100];
+    public int[][] decryptionKey = new int[100][100];
+    private int N;
+    private int[] inverse = {
+        -1, 1, -1, 9, -1, 21, -1, 15, -1, 15, -1, 3, -1,
+        19, -1, 7, -1, 23, -1, 11, -1, 5, -1, 17, -1, 25
+    };
+
+    public HillCipher() {}
+
+    public HillCipher(int key[][], int n) {
+        this.encryptionKey = key;
+        this.N = n;
+        inverse();
+    }
+
+    public void setEncryptionKey(int key[][], int n) {
+        this.encryptionKey = key;
+        this.N = n;
+        inverse();
+    }
+
+    private void getCofactor(int A[][], int temp[][], int p, int q, int n) {
+        int i = 0, j = 0;
+        for (int row = 0; row < n; row++) {
+            for (int col = 0; col < n; col++) {
+                if (row != p && col != q) {
+                    temp[i][j++] = A[row][col];
+                    if (j == n - 1) {
+                        j = 0;
+                        i++;
                     }
-                    break;                        
-                }
-                case 4:{
-                    if ( plainText.equals("")) {
-                        System.out.println("Enter required parameters for encrypting\n");
-                    }else {
-                        key = getInverse( key , n );
-                        for( int i = 0 ; i < n ; i++ ){
-                              for ( int j = 0 ; j < n ;j ++ ){
-                                int temp =  key[i][j] % 26;
-                                key[i][j] = temp < 0 ? 26 + temp : temp; 
-                              }
-                              System.out.println("");
-                            }
-                        plainTextMatrix = matrixMultiply(key , cipherMatrix, n, plainText.length() / n );
-                        for ( int j = 0 ; j < plainText.length() / n ; j++ ) {
-                            for ( int i = 0; i < n ; i++ ) {
-                                plainTextMatrix[i][j] %= 26;
-                            }
-                        }
-                        System.out.println(matrixToString(matASCIIToChar(plainTextMatrix, n, plainText.length() / n ), n , plainText.length() / n ));
-                    }
-                    break;
-                }
-                case 5:{
-                    break;
-                }
-                default:{
-                    System.out.println("Invalid option\n");
-                    break;
                 }
             }
         }
     }
 
-    private static void printMenu() {
-        System.out.println("1. Input key");
-        System.out.println("2. Input plain text");
-        System.out.println("3. Encrypt");
-        System.out.println("4. Decrypt");
-        System.out.println("5. Exit");
+    public int determinant(int A[][], int n) {
+        int D = 0;
+        if (n == 1)
+            return A[0][0];
+        int[][] temp = new int[N][N];
+        int sign = 1;
+        for (int f = 0; f < n; f++) {
+            getCofactor(A, temp, 0, f, n);
+            D += sign * A[0][f] * determinant(temp, n - 1);
+            sign = -sign;
+        }
+        return D;
     }
-    
-    private static String checkPlainText ( String plainText, int n ) {
-        
-        return plainText.length() % n == 0 ? 
-                plainText : 
-                plainText + new String(new char[(n - plainText.length() % n)]).replace('\0', plainText.charAt(plainText.length()-1));
-    }
-    
-    private static int[][] matCharToASCII ( char[][] matrix, int row, int column ){
-        
-        int[][] numericMatrix = new int[row][column];
-        StringBuilder alphaIndex = new StringBuilder("abcdefghijklmnopqrstuvwxyz");
-        for ( int  i = 0 ; i < row ; i++ ) {
-            for (int j = 0 ; j < column ; j++ ) {
-                numericMatrix[i][j] = alphaIndex.indexOf( Character.toString( matrix[i][j] ) );
+
+    public void adjoint(int A[][], int[][] adj) {
+        if (N == 1) {
+            adj[0][0] = 1;
+            return;
+        }
+        int sign = 1;
+        int[][] temp = new int[N][N];
+
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                getCofactor(A, temp, i, j, N);
+                sign = ((i + j) % 2 == 0) ? 1 : -1;
+                adj[j][i] = sign * (determinant(temp, N - 1));
             }
         }
-        return numericMatrix;
-        
     }
-    
-    private static char[][] matASCIIToChar ( int[][] matrix, int row, int column ){
-        
-        char[][] alphaMatrix = new char[row][column];
-        StringBuilder alphaIndex = new StringBuilder("abcdefghijklmnopqrstuvwxyz");
-        for ( int  i = 0 ; i < row ; i++ ) {
-            for (int j = 0 ; j < column ; j++ ) {
-                alphaMatrix[i][j] = alphaIndex.charAt( matrix[i][j] );
-            }
+
+    public boolean inverse() {
+        int det = determinant(this.encryptionKey, N);
+        det = this.inverse[det % 26 >= 0 ? det % 26 : det % 26 + 26];
+        if (det == -1) {
+            System.out.print("Inverse does not exist!");
+            return false;
         }
-        return alphaMatrix;
-        
+        int[][] adj = new int[N][N];
+        adjoint(this.encryptionKey, adj);
+        for (int i = 0; i < N; i++)
+            for (int j = 0; j < N; j++)
+                this.decryptionKey[i][j] = (adj[i][j] * det) % 26 >= 0 ? (adj[i][j] * det) % 26
+                        : (adj[i][j] * det) % 26 + 26;
+        return true;
     }
-    
-    private static String matrixToString ( char[][] matrix, int row, int column ) {
-        
-        StringBuilder str = new StringBuilder();
-        for ( int  j = 0 ; j < column ; j++ ) {
-            for (int i = 0 ; i < row ; i++ ) {
-                str.append( Character.toString( matrix[i][j] ) );
-            }
+
+    private int getCharacterIndex(char c) {
+        return ((int) c) - 65;
+    }
+
+    private char getCharacter(int n) {
+        return ((char) (n + 65));
+    }
+
+    public String encodeChunk(String msg) {
+        int[] message = new int[this.N];
+        for (int i = 0; i < this.N; i++) {
+            message[i] = getCharacterIndex(msg.charAt(i));
         }
-        return str.toString();
-    }
-    
-    private static char[][] plainTextToMatrix ( String finalPlainText, int n ) {
-        
-        int entries = finalPlainText.length() / n;
-        char[][] plainTextMatrixCollection = new char[n][entries];
-        
-        for ( int j = 0 ; j < entries ; j++ ) {
-            for ( int i = 0 ; i < n ; i++ ) {
-                plainTextMatrixCollection[i][j] = (char)finalPlainText.charAt( j * n + i  );
+        int[] encoded = new int[this.N];
+        for (int i = 0; i < this.N; i++) {
+            int s = 0;
+            for (int j = 0; j < this.N; j++) {
+                s = s + message[j] * this.encryptionKey[i][j];
             }
+            s = (s % 26 >= 0) ? s % 26 : s % 26 + 26;
+            encoded[i] = s;
         }
-        return plainTextMatrixCollection;
+        String encodedChunk = "";
+        for (int i = 0; i < this.N; i++) {
+            encodedChunk += String.valueOf(getCharacter(encoded[i]));
+        }
+        return encodedChunk;
     }
-    
-    
-    private static int[][] matrixMultiply( int[][] keyMatrix, int[][] productMatrix, int n, int entries) {
-        
-        int finalMatrix[][] = new int[n][entries];
-        for ( int i = 0 ; i < n ; i ++ ) {
-            for ( int j = 0 ; j < entries ; j++ ) {
-                for (int k = 0 ; k < n ; k++ ) {
-                    finalMatrix[i][j] += keyMatrix[i][k] * productMatrix[k][j];
+
+    public String decodeChunk(String msg) {
+        int[] message = new int[this.N];
+        for (int i = 0; i < this.N; i++) {
+            message[i] = getCharacterIndex(msg.charAt(i));
+        }
+        int[] decoded = new int[this.N];
+        for (int i = 0; i < this.N; i++) {
+            int s = 0;
+            for (int j = 0; j < this.N; j++) {
+                s = s + message[j] * this.decryptionKey[i][j];
+            }
+            s = (s % 26 >= 0) ? s % 26 : s % 26 + 26;
+            decoded[i] = s;
+        }
+        String decodedChunk = "";
+        for (int i = 0; i < this.N; i++) {
+            decodedChunk += String.valueOf(getCharacter(decoded[i]));
+        }
+        return decodedChunk;
+    }
+
+    public String encryptMessage(String message) {
+        message = message.toUpperCase();
+        message = message.replaceAll("\\s", "");
+        if (message.length() % this.N != 0) {
+            String extra = "";
+            for (int i = 0; i < message.length() % this.N; i++)
+                extra += "X";
+            message += extra;
+        }
+        String cipherText = "";
+        for (int i = 0; i < message.length(); i += this.N) {
+            cipherText += this.encodeChunk(message.substring(i, i + this.N));
+        }
+        return cipherText;
+    }
+
+    public String decryptMessage(String message) {
+        message = message.toUpperCase();
+        if (message.length() % this.N != 0) {
+            String extra = "";
+            for (int i = 0; i < message.length() % this.N; i++)
+                extra += "X";
+            message += extra;
+        }
+        String plainText = "";
+        for (int i = 0; i < message.length(); i += this.N) {
+            plainText += this.decodeChunk(message.substring(i, i + this.N));
+        }
+        return plainText;
+    }
+
+    public static void printMatrix(int a[][], int n) {
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                System.out.print("" + a[i][j] + " ");
+            }
+            System.out.print("\n");
+        }
+    }
+
+    public static void main(String[] args) {
+        int encryptKey[][] = new int[10][10];
+        int n;
+        HillCipher hillCipher = new HillCipher();
+        int choice;
+        String message;
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("1. Encrypt Message\n2. Decrypt Message\nEnter your choice: ");
+        choice = scanner.nextInt();
+        if (choice == 1) {
+            scanner.nextLine();
+            System.out.print("Enter the message to encrypt: ");
+            message = scanner.nextLine();
+            System.out.print("Enter the key size: ");
+            n = scanner.nextInt();
+            System.out.println("Enter the matrix: ");
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    encryptKey[i][j] = scanner.nextInt();
                 }
             }
-        }
-        
-        return finalMatrix;
-    }
-    
-    static void getCofactor( int matrix[][], int temp[][], int p, int q, int n ) { 
-        
-       int i = 0, j = 0;  
-       for (int row = 0; row < n; row++) { 
-           for (int col = 0; col < n; col++) { 
-               if (row != p && col != q) { 
-                   temp[i][j++] = matrix[row][col]; 
-                   if (j == n - 1) { 
-                       j = 0; 
-                       i++; 
-                   } 
-               } 
-           } 
-       } 
-    } 
-    
-    static int getDeterminant( int matrix[][], int n, int N) { 
-        int D = 0; 
-        if (n == 1) 
-            return matrix[0][0];  
-        int temp[][] = new int[N][N];  
-        int sign = 1;   
-        for ( int i = 0; i < n; i++ ) { 
-            getCofactor( matrix , temp, 0, i, n ); 
-            D += sign * matrix[0][i] * getDeterminant( temp , n - 1, N);  
-            sign = -sign; 
-        } 
-      
-        return D; 
-    } 
-    
-    
-    static int getInverseDeterminant( int d ) {
-        //Run through 25 and find which leaves 1, as d * d^-1 = 1 mod 26 
-        for ( int i = 1 ; i < 26 ; i++ ) {
-            if ( ( d * i ) % 26 == 1 ) {
-                return i;
+            hillCipher.setEncryptionKey(encryptKey, n);
+            System.out.print("The encrypted message is: ");
+            System.out.println(hillCipher.encryptMessage(message));
+        } else {
+            scanner.nextLine();
+            System.out.print("Enter the message to decrypt: ");
+            message = scanner.nextLine();
+            System.out.print("Enter the key size: ");
+            n = scanner.nextInt();
+            System.out.println("Enter the matrix: ");
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    encryptKey[i][j] = scanner.nextInt();
+                }
             }
+            hillCipher.setEncryptionKey(encryptKey, n);
+            System.out.print("The decrypted message is: ");
+            System.out.println(hillCipher.decryptMessage(message));
+            scanner.close();
         }
-        return d;
-    }
-    
-    static int[][] getAdjointMatrix ( int[][] matrix , int n ) {
-        
-        int adj[][] = new int[n][n];
-        int sign = 1; 
-        int [][]temp = new int[n][n]; 
-        for (int i = 0; i < n; i++) { 
-            for (int j = 0; j < n; j++) {  
-                getCofactor( matrix , temp, i, j, n ); 
-                sign = ((i + j) % 2 == 0)? 1: -1; 
-                adj[j][i] = (sign)*(getDeterminant(temp, n-1 , n)); 
-            } 
-        } 
-        return adj;
-    }
-    
-    static int[][] getInverse ( int[][] matrix, int n) {
-        
-        int determinant = getDeterminant( matrix, n, n );
-        int determinantInverse = getInverseDeterminant(determinant);
-        int[][] adjointMatrix = getAdjointMatrix( matrix , n );
-        for ( int i = 0 ; i < n ; i++ ) {
-            for ( int j = 0 ; j < n ; j++ ) {
-                adjointMatrix[i][j] *= determinantInverse;
-            }
-        }
-        return adjointMatrix;
     }
 }

@@ -10,6 +10,9 @@ class Tuple {
 }
 
 class Playfair {
+	// REPLACE j WITH i
+	// x FOR REPEATING CHARACTERS
+	// z FOR LAST CHAR EVEN LENGTH
 	public static void main(String[] args){
 		String inputtext, key;
 		char[][] table = new char[5][5];
